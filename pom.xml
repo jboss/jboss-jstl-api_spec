@@ -46,6 +46,11 @@
       <artifactId>jboss-jsp-api_2.2_spec</artifactId>
       <version>1.0.0.Final</version>
     </dependency>
+    <dependency>
+        <groupId>org.apache.xalan</groupId>
+        <artifactId>xalan</artifactId>
+        <version>2.7.1-1.jbossorg</version>
+    </dependency>
   </dependencies>
   
 </project>

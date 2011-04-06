@@ -58,12 +58,7 @@
 
 package org.apache.taglibs.standard.tag.common.xml;
 
-import javax.xml.xpath.XPathFactory;
-import javax.xml.xpath.XPathFactoryConfigurationException;
-import javax.xml.xpath.XPathFunctionResolver;
-import javax.xml.xpath.XPathVariableResolver;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
+import org.apache.xpath.jaxp.XPathFactoryImpl;
 
 /**
  * This factory class is added to provide access to our own implementation
@@ -72,74 +67,9 @@ import java.security.PrivilegedAction;
  * 
  * @author dhirup
  */
-public class JSTLXPathFactory extends XPathFactory {
-
-    private XPathFactory actual;
-
-    public JSTLXPathFactory() {
-
-        ClassLoader old = getContextClassLoader();
-        try {
-            // Use the defining class loader
-            setContextClassLoader(JSTLXPathFactory.class.getClassLoader());
-            actual = XPathFactory.newInstance();
-        } finally {
-            setContextClassLoader(old);
-        }
-
-        if (actual == null)
-            throw new IllegalStateException("Could not load default XPathFactory");
-    }
-
-    private static ClassLoader getContextClassLoader() {
-        return (ClassLoader)
-                AccessController.doPrivileged(new PrivilegedAction() {
-                    public Object run() {
-                        ClassLoader cl = null;
-                        try {
-                            cl = Thread.currentThread().getContextClassLoader();
-                        } catch (SecurityException eat) {
-                        }
-                        return cl;
-                    }
-                });
-    }
-
-    private static void setContextClassLoader(ClassLoader cl) {
-        AccessController.doPrivileged(new PrivilegedAction() {
-            public Object run() {
-                ClassLoader cl = null;
-                try {
-                    Thread.currentThread().setContextClassLoader(cl);
-                } catch (SecurityException eat) {
-                }
-
-                return null;
-            }
-        });
-    }
-
+public class JSTLXPathFactory extends XPathFactoryImpl {
+    
     public javax.xml.xpath.XPath newXPath() {
         return new org.apache.taglibs.standard.tag.common.xml.JSTLXPathImpl(null, null);
-    }
-
-    public boolean isObjectModelSupported(String objectModel) {
-        return actual.isObjectModelSupported(objectModel);
-    }
-
-    public void setFeature(String name, boolean value) throws XPathFactoryConfigurationException {
-        actual.setFeature(name, value);
-    }
-
-    public boolean getFeature(String name) throws XPathFactoryConfigurationException {
-        return actual.getFeature(name);
-    }
-
-    public void setXPathVariableResolver(XPathVariableResolver resolver) {
-        actual.setXPathVariableResolver(resolver);
-    }
-
-    public void setXPathFunctionResolver(XPathFunctionResolver resolver) {
-        actual.setXPathFunctionResolver(resolver);
-    }
+    }    
 }
