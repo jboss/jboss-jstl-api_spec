@@ -135,31 +135,12 @@ public class XPathUtil {
     private static HashMap exprCache;
     private static JSTLXPathNamespaceContext jstlXPathNamespaceContext = null;
 
-    private static final String XPATH_FACTORY_CLASS_NAME = 
-            "org.apache.taglibs.standard.tag.common.xml.JSTLXPathFactory";
+    private static final String XPATH_FACTORY_CLASS_NAME = JSTLXPathFactory.class.getName();
+
     private static XPathFactory XPATH_FACTORY;
     static {
-        // If the system property DEFAULT_PROPERTY_NAME + ":uri" is present, 
-        // where uri is the parameter to this method, then its value is read 
-        // as a class name. The method will try to create a new instance of 
-        // this class by using the class loader, and returns it if it is 
-        // successfully created.
-        if (System.getSecurityManager() !=  null) {
-             AccessController.doPrivileged(new PrivilegedAction(){
-                public Object run(){
-                    System.setProperty(XPathFactory.DEFAULT_PROPERTY_NAME + 
-                            ":" + XPathFactory.DEFAULT_OBJECT_MODEL_URI, 
-                            XPATH_FACTORY_CLASS_NAME);
-                    return null;
-                }
-            });
-        } else {
-            System.setProperty(XPathFactory.DEFAULT_PROPERTY_NAME + 
-                ":" + XPathFactory.DEFAULT_OBJECT_MODEL_URI, 
-                XPATH_FACTORY_CLASS_NAME);
-        }
         try {
-            XPATH_FACTORY = XPathFactory.newInstance(XPathFactory.DEFAULT_OBJECT_MODEL_URI);
+            XPATH_FACTORY = XPathFactory.newInstance(XPathFactory.DEFAULT_OBJECT_MODEL_URI, XPATH_FACTORY_CLASS_NAME, JSTLXPathFactory.class.getClassLoader());
         } catch (XPathFactoryConfigurationException xpce) {
             xpce.printStackTrace();
         }
