@@ -58,20 +58,18 @@
 
 package org.apache.taglibs.standard.tag.common.sql;
 
-import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import org.apache.taglibs.standard.resources.Resources;
 
 import javax.sql.DataSource;
-
-import org.apache.taglibs.standard.resources.Resources;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 
 /**
  * <p>A simple <code>DataSource</code> wrapper for the standard
  * <code>DriverManager</code> class.
- * 
+ *
  * @author Hans Bergsten
  */
 public class DataSourceWrapper implements DataSource {
@@ -80,12 +78,12 @@ public class DataSourceWrapper implements DataSource {
     private String userName;
     private String password;
 
-    public void setDriverClassName(String driverClassName) 
-	throws ClassNotFoundException, InstantiationException, 
+    public void setDriverClassName(String driverClassName)
+	throws ClassNotFoundException, InstantiationException,
 	       IllegalAccessException {
 
 	this.driverClassName = driverClassName;
-        Class.forName(driverClassName, true, 
+        Class.forName(driverClassName, true,
             Thread.currentThread().getContextClassLoader()).newInstance();
     }
 
@@ -106,12 +104,13 @@ public class DataSourceWrapper implements DataSource {
      * set properties.
      */
     public Connection getConnection() throws SQLException {
+
 	Connection conn = null;
 	if (userName != null) {
-	    conn = DriverManager.getConnection(jdbcURL, userName, password);
+	    conn = DriverManagerAccessor.getConnection(jdbcURL, userName, password);
 	}
 	else {
-	    conn = DriverManager.getConnection(jdbcURL);
+	    conn = DriverManagerAccessor.getConnection(jdbcURL);
 	}
 	return conn;
     }
@@ -120,32 +119,32 @@ public class DataSourceWrapper implements DataSource {
      * Always throws a SQLException. Username and password are set
      * in the constructor and can not be changed.
      */
-    public Connection getConnection(String username, String password) 
+    public Connection getConnection(String username, String password)
             throws SQLException {
         throw new SQLException(Resources.getMessage("NOT_SUPPORTED"));
     }
-    
+
     /**
      * Always throws a SQLException. Not supported.
      */
     public int getLoginTimeout() throws SQLException {
         throw new SQLException(Resources.getMessage("NOT_SUPPORTED"));
     }
-    
+
     /**
      * Always throws a SQLException. Not supported.
      */
     public PrintWriter getLogWriter() throws SQLException {
         throw new SQLException(Resources.getMessage("NOT_SUPPORTED"));
     }
-    
+
     /**
      * Always throws a SQLException. Not supported.
      */
     public void setLoginTimeout(int seconds) throws SQLException {
         throw new SQLException(Resources.getMessage("NOT_SUPPORTED"));
     }
-    
+
     /**
      * Always throws a SQLException. Not supported.
      */
