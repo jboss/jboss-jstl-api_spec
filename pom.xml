@@ -8,15 +8,15 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.spec.javax.servlet.jstl</groupId>
   <artifactId>jboss-jstl-api_1.2_spec</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.1.Final</version>
   <packaging>jar</packaging>
   <name>JBoss JSTL 1.2 API</name>
   <description>The JSTL 1.2 API classes</description>
   
   <scm>
-    <connection>scm:svn:http://anonsvn.jboss.org/repos/jbossas/projects/specs/trunk/jboss-jsp-api_1.2_spec</connection>
-    <developerConnection>scm:svn:https://svn.jboss.org/repos/jbossas/projects/specs/trunk/jboss-jsp-api_1.2_spec</developerConnection>
-    <url>http://fisheye.jboss.org/browse/JBossAS/projects/specs/trunk/jboss-jsp-api_1.2_spec</url>
+    <connection>scm:svn:http://anonsvn.jboss.org/repos/jbossas/projects/specs/tags/jboss-jstl-api_1.2_spec-1.0.1.Final</connection>
+    <developerConnection>scm:svn:https://svn.jboss.org/repos/jbossas/projects/specs/tags/jboss-jstl-api_1.2_spec-1.0.1.Final</developerConnection>
+    <url>http://fisheye.jboss.org/browse/JBossAS/projects/specs/tags/jboss-jstl-api_1.2_spec-1.0.1.Final</url>
   </scm>
   
   <reporting>
