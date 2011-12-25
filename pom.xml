@@ -1,41 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  
-  <parent>
-    <groupId>org.jboss.spec</groupId>
-    <artifactId>jboss-specs-parent</artifactId>
-    <version>1.0.0.Beta2</version>
-  </parent>
   <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.jboss</groupId>
+    <artifactId>jboss-parent</artifactId>
+    <version>8</version>
+  </parent>
+
   <groupId>org.jboss.spec.javax.servlet.jstl</groupId>
   <artifactId>jboss-jstl-api_1.2_spec</artifactId>
   <version>1.0.2-SNAPSHOT</version>
   <packaging>jar</packaging>
+
   <name>JBoss JSTL 1.2 API</name>
   <description>The JSTL 1.2 API classes</description>
-  
+
+  <licenses>
+    <license>
+      <name>lgpl</name>
+      <url>http://repository.jboss.org/licenses/lgpl-2.1.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
   <scm>
-    <connection>scm:svn:http://anonsvn.jboss.org/repos/jbossas/projects/specs/trunk/jboss-jstl-api_1.2_spec</connection>
-    <developerConnection>scm:svn:https://svn.jboss.org/repos/jbossas/projects/specs/trunk/jboss-jstl-api_1.2_spec</developerConnection>
-    <url>http://fisheye.jboss.org/browse/JBossAS/projects/specs/trunk/jboss-jstl-api_1.2_spec</url>
+    <connection>scm:git:git@github.com:jboss/jboss-jstl-api_spec.git</connection>
+    <developerConnection>scm:git:git@github.com:jboss/jboss-jstl-api_spec.git</developerConnection>
+    <url>https://github.com/jboss/jboss-jstl-api_spec</url>
   </scm>
-  
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <doctitle>JSTL 1.2 API Documentation</doctitle>
-          <links>
-            <link>http://java.sun.com/j2se/1.5/docs/api</link>
-          </links>
-          <windowtitle>JSTL 1.2 API Documentation</windowtitle>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
-  
+
   <dependencies>
+    <dependency>
+      <groupId>org.jboss.spec.javax.el</groupId>
+      <artifactId>jboss-el-api_2.2_spec</artifactId>
+      <version>1.0.0.Final</version>
+    </dependency>
     <dependency>
       <groupId>org.jboss.spec.javax.servlet</groupId>
       <artifactId>jboss-servlet-api_3.0_spec</artifactId>
@@ -47,10 +47,10 @@
       <version>1.0.0.Final</version>
     </dependency>
     <dependency>
-        <groupId>org.apache.xalan</groupId>
-        <artifactId>xalan</artifactId>
-        <version>2.7.1-1.jbossorg</version>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <version>2.7.1.jbossorg-2</version>
     </dependency>
   </dependencies>
-  
+
 </project>
