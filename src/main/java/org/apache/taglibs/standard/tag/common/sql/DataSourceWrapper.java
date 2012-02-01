@@ -64,7 +64,8 @@ import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
-
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.logging.Logger;
 
 /**
  * <p>A simple <code>DataSource</code> wrapper for the standard
@@ -166,4 +167,10 @@ public class DataSourceWrapper implements DataSource {
         throw new SQLException(Resources.getMessage("NOT_SUPPORTED"));
     }
 
+    /**
+     * Always throws a SQLFeatureNotSupportedException. Not supported.
+     */
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        throw new SQLFeatureNotSupportedException(Resources.getMessage("NOT_SUPPORTED"));
+    }
 }
