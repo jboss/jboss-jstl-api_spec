@@ -78,6 +78,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -459,7 +460,19 @@ public abstract class ImportSupport extends BodyTagSupport
 	    public void write(int b) throws IOException {
 		bos.write(b);
 	    }
+ 
+            /** 'True' if write to this ServletOutputStream will succeed; otherwise false. */
+            public boolean isReady() {
+                return true;
+            }
+
+            /** Instruct this ServletOutputStream to invoke the provided writeListener when it is possible to write. */
+            public void setWriteListener(WriteListener writeListener) {
+		// do nothing
+            }
+       
 	};
+
 
 	/** 'True' if getWriter() was called; false otherwise. */
 	private boolean isWriterUsed;

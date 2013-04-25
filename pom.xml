@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>9</version>
+    <version>10</version>
   </parent>
 
   <groupId>org.jboss.spec.javax.servlet.jstl</groupId>
@@ -119,18 +119,18 @@
   <dependencies>
     <dependency>
       <groupId>org.jboss.spec.javax.el</groupId>
-      <artifactId>jboss-el-api_2.2_spec</artifactId>
-      <version>1.0.1.Final</version>
+      <artifactId>jboss-el-api_3.0_spec</artifactId>
+      <version>1.0.0.Alpha1</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.spec.javax.servlet</groupId>
-      <artifactId>jboss-servlet-api_3.0_spec</artifactId>
-      <version>1.0.1.Final</version>
+      <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+      <version>1.0.0.Alpha1</version>
     </dependency>
      <dependency>
       <groupId>org.jboss.spec.javax.servlet.jsp</groupId>
       <artifactId>jboss-jsp-api_2.2_spec</artifactId>
-      <version>1.0.1.Final</version>
+      <version>1.0.2.Alpha1</version>
     </dependency>
     <dependency>
       <groupId>xalan</groupId>
