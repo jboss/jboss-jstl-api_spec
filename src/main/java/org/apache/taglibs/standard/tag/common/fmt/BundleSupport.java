@@ -197,7 +197,7 @@ public abstract class BundleSupport extends BodyTagSupport {
      * <tt>javax.servlet.jsp.jstl.fmt.fallbackLocale</tt> configuration
      * setting) and the available locales, for the given base name.
      *
-     * @param pageContext Page in which the resource bundle with the
+     * @param pc PageContext Page in which the resource bundle with the
      * given base name is requested
      * @param basename Resource bundle base name
      *
@@ -273,7 +273,7 @@ public abstract class BundleSupport extends BodyTagSupport {
      * each of the locales (in order of preference) against the available
      * locales in order to determine the best matching locale.
      *
-     * @param pageContext the page in which the resource bundle with the
+     * @param PageContext the page in which the resource bundle with the
      * given base name is requested
      * @param basename the resource bundle's base name
      *

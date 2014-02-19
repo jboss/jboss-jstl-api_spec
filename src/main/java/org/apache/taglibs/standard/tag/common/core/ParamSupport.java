@@ -72,7 +72,7 @@ import org.apache.taglibs.standard.resources.Resources;
  * <p>Support for tag handlers for &lt;param&gt;, the URL parameter
  * subtag for &lt;import&gt; in JSTL 1.0.</p>
  *
- * @see ParamParent, ImportSupport, URLEncodeSupport
+ * @see ParamParent ImportSupport URLEncodeSupport
  * @author Shawn Bayern
  */
 
