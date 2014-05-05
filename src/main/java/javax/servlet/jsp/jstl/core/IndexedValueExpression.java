@@ -63,7 +63,7 @@ import javax.el.ValueExpression;
 
 /**
  * @author Jacob Hookom
- * @version $Id$
+ * @version $Id: IndexedValueExpression.java,v 1.3 2006/11/03 17:21:57 jluehe Exp $
  */
 public final class IndexedValueExpression extends ValueExpression {
 

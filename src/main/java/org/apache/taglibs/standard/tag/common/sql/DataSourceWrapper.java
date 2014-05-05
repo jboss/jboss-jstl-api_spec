@@ -58,14 +58,19 @@
 
 package org.apache.taglibs.standard.tag.common.sql;
 
-import org.apache.taglibs.standard.resources.Resources;
-
-import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.Properties;
 import java.util.logging.Logger;
+
+import javax.sql.DataSource;
+
+import org.apache.taglibs.standard.resources.Resources;
+
 
 /**
  * <p>A simple <code>DataSource</code> wrapper for the standard
@@ -74,7 +79,7 @@ import java.util.logging.Logger;
  * @author Hans Bergsten
  */
 public class DataSourceWrapper implements DataSource {
-    private String driverClassName;
+    private Driver driver;
     private String jdbcURL;
     private String userName;
     private String password;
@@ -83,9 +88,11 @@ public class DataSourceWrapper implements DataSource {
 	throws ClassNotFoundException, InstantiationException,
 	       IllegalAccessException {
 
-	this.driverClassName = driverClassName;
-        Class.forName(driverClassName, true,
+        Object instance = Class.forName(driverClassName, true, 
             Thread.currentThread().getContextClassLoader()).newInstance();
+        if (instance instanceof Driver) {
+            driver = (Driver) instance;
+        }
     }
 
     public void setJdbcURL(String jdbcURL) {
@@ -105,15 +112,25 @@ public class DataSourceWrapper implements DataSource {
      * set properties.
      */
     public Connection getConnection() throws SQLException {
-
-	Connection conn = null;
-	if (userName != null) {
-	    conn = DriverManagerAccessor.getConnection(jdbcURL, userName, password);
-	}
-	else {
-	    conn = DriverManagerAccessor.getConnection(jdbcURL);
-	}
-	return conn;
+        Connection conn = null;
+        if (driver != null) {
+            Properties props = new Properties();
+            if (userName != null) {
+                props.put("user", userName);
+            }
+            if (password != null) {
+                props.put("password", password);
+            }
+            conn = driver.connect(jdbcURL, props);
+        }
+        if (conn == null) {
+            if (userName != null) {
+                conn = DriverManagerAccessor.getConnection(jdbcURL, userName, password);
+            } else {
+                conn = DriverManagerAccessor.getConnection(jdbcURL);
+            }
+        }
+        return conn;
     }
 
     /**
@@ -169,8 +186,11 @@ public class DataSourceWrapper implements DataSource {
 
     /**
      * Always throws a SQLFeatureNotSupportedException. Not supported.
+     * @since jdk1.7
      */
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        throw new SQLFeatureNotSupportedException(Resources.getMessage("NOT_SUPPORTED"));
+        throw new SQLFeatureNotSupportedException(
+                Resources.getMessage("NOT_SUPPORTED"));
     }
+
 }
