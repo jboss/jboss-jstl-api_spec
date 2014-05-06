@@ -20,12 +20,12 @@
     <licenses>
         <license>
             <name>CDDL or GPLv2 with exceptions</name>
-            <url>https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html</url>
+            <url>https://glassfish.java.net/public/CDDL+GPL_1_1.html</url>
             <distribution>repo</distribution>
         </license>
         <license>
-            <name>CDDL or GPLv2 with exceptions</name>
-            <url>https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html</url>
+            <name>Apache Software License, Version 2.0</name>
+            <url>http://repository.jboss.org/licenses/apache-2.0.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>

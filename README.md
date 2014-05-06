@@ -16,14 +16,6 @@ Ensure you have JDK 7 (or newer) installed
 
 > java -version
 
-On *nix-like system use the prepared script
+Ensure your have Maven 3.1.0 (or newer) installed then you can do
 
-> ./build.sh
-
-On Windows use the corresponding batch script
-
-> build.bat
-
-If you already have Maven 3.1.0 (or newer) installed you can use it directly
-
-> mvn install
+> mvn clean install
