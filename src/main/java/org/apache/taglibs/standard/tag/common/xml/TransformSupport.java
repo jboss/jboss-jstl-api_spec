@@ -88,11 +88,11 @@ public abstract class TransformSupport extends BodyTagSupport {
 
     public TransformSupport() {
         try {
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory dbf = ModularUtil.createDocumentBuilderFactory();
             dbf.setNamespaceAware(true);
             dbf.setValidating(false);
             db = dbf.newDocumentBuilder();
-            tf = TransformerFactory.newInstance();
+            tf = ModularUtil.createTransformerFactory();
         } catch (ParserConfigurationException e) {
             throw (AssertionError) new AssertionError("Unable to create DocumentBuilder").initCause(e);
         }

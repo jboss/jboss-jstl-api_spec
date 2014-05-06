@@ -22,7 +22,9 @@ import javax.servlet.jsp.tagext.TagSupport;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 
 import org.apache.xpath.VariableStack;
 import org.apache.xpath.XPathContext;
@@ -41,10 +43,12 @@ public class XalanUtil {
 
     static {
         // from Java5 on DocumentBuilderFactory is thread safe and hence can be cached
-        dbf = DocumentBuilderFactory.newInstance();
+        dbf = ModularUtil.createDocumentBuilderFactory();
         dbf.setNamespaceAware(true);
         dbf.setValidating(false);
     }
+
+
 
     /**
      * Return the XPathContext to be used for evaluating expressions.

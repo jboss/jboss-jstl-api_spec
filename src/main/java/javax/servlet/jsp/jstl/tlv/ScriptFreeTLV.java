@@ -28,6 +28,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.taglibs.standard.tag.common.xml.ModularUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -67,7 +68,7 @@ public class ScriptFreeTLV extends TagLibraryValidator {
      * SAX parsers.
      */
     public ScriptFreeTLV() {
-        factory = SAXParserFactory.newInstance();
+        factory = ModularUtil.createSAXParserFactory();
         factory.setValidating(false);
         factory.setNamespaceAware(true);
     }

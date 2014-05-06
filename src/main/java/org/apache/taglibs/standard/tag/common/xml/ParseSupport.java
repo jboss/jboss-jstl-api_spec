@@ -46,7 +46,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLFilter;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * <p>Support for tag handlers for &lt;parse&gt;, the XML parsing tag.</p>
@@ -110,7 +109,7 @@ public abstract class ParseSupport extends BodyTagSupport {
 
             // set up our DocumentBuilder
             if (dbf == null) {
-                dbf = DocumentBuilderFactory.newInstance();
+                dbf = ModularUtil.createDocumentBuilderFactory();
                 dbf.setNamespaceAware(true);
                 dbf.setValidating(false);
             }
@@ -119,7 +118,7 @@ public abstract class ParseSupport extends BodyTagSupport {
             // if we've gotten a filter, set up a transformer to support it
             if (filter != null) {
                 if (tf == null) {
-                    tf = TransformerFactory.newInstance();
+                    tf = ModularUtil.createTransformerFactory();
                 }
                 if (!tf.getFeature(SAXTransformerFactory.FEATURE)) {
                     throw new JspTagException(
@@ -192,7 +191,7 @@ public abstract class ParseSupport extends BodyTagSupport {
 
             // use TrAX to adapt SAX events to a Document object
             th.setResult(new DOMResult(o));
-            XMLReader xr = XMLReaderFactory.createXMLReader();
+            XMLReader xr = ModularUtil.createXMLReader();
             xr.setEntityResolver(new JstlEntityResolver(pageContext));
             //   (note that we overwrite the filter's parent.  this seems
             //    to be expected usage.  we could cache and reset the old

@@ -45,7 +45,7 @@ public class ExprSupportTest {
 
     @BeforeClass
     public static void loadXml() throws Exception {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory dbf = ModularUtil.createDocumentBuilderFactory();
         dbf.setNamespaceAware(true);
         dbf.setValidating(false);
         DocumentBuilder db = dbf.newDocumentBuilder();

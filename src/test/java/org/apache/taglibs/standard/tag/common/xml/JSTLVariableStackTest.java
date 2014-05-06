@@ -156,7 +156,7 @@ public class JSTLVariableStackTest {
         Assert.assertTrue(XObjectFactory.create(1234, xpathContext) instanceof XNumber);
         Assert.assertTrue(XObjectFactory.create("Hello", xpathContext) instanceof XString);
 
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory dbf = ModularUtil.createDocumentBuilderFactory();
         dbf.setNamespaceAware(true);
         dbf.setValidating(false);
         DocumentBuilder db = dbf.newDocumentBuilder();

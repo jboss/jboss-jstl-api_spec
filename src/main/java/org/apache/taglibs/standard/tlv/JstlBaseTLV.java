@@ -35,6 +35,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.taglibs.standard.resources.Resources;
+import org.apache.taglibs.standard.tag.common.xml.ModularUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -149,7 +150,7 @@ public abstract class JstlBaseTLV extends TagLibraryValidator {
             DefaultHandler h = getHandler();
 
             // parse the page
-            SAXParserFactory f = SAXParserFactory.newInstance();
+            SAXParserFactory f = ModularUtil.createSAXParserFactory();
             f.setValidating(false);
             f.setNamespaceAware(true);
             SAXParser p = f.newSAXParser();

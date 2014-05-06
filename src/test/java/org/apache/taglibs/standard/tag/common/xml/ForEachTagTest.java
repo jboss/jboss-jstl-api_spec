@@ -51,7 +51,7 @@ public class ForEachTagTest {
 
     @BeforeClass
     public static void loadXml() throws Exception {
-        dbf = DocumentBuilderFactory.newInstance();
+        dbf = ModularUtil.createDocumentBuilderFactory();
         dbf.setNamespaceAware(true);
         dbf.setValidating(false);
         DocumentBuilder db = dbf.newDocumentBuilder();

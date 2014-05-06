@@ -29,6 +29,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.taglibs.standard.tag.common.xml.ModularUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -106,7 +107,7 @@ public class PermittedTaglibsTLV extends TagLibraryValidator {
             DefaultHandler h = new PermittedTaglibsHandler();
 
             // parse the page
-            SAXParserFactory f = SAXParserFactory.newInstance();
+            SAXParserFactory f = ModularUtil.createSAXParserFactory();
             f.setValidating(true);
             SAXParser p = f.newSAXParser();
             p.parse(page.getInputStream(), h);
