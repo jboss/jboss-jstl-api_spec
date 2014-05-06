@@ -1,51 +1,10 @@
 /*
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
- *
- * Copyright (c) 1997-2010 Oracle and/or its affiliates. All rights reserved.
- *
- * The contents of this file are subject to the terms of either the GNU
- * General Public License Version 2 only ("GPL") or the Common Development
- * and Distribution License("CDDL") (collectively, the "License").  You
- * may not use this file except in compliance with the License.  You can
- * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
- * language governing permissions and limitations under the License.
- *
- * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
- *
- * GPL Classpath Exception:
- * Oracle designates this particular file as subject to the "Classpath"
- * exception as provided by Oracle in the GPL Version 2 section of the License
- * file that accompanied this code.
- *
- * Modifications:
- * If applicable, add the following below the License Header, with the fields
- * enclosed by brackets [] replaced by your own identifying information:
- * "Portions Copyright [year] [name of copyright owner]"
- *
- * Contributor(s):
- * If you wish your version of this file to be governed by only the CDDL or
- * only the GPL Version 2, indicate your decision by adding "[Contributor]
- * elects to include this software in this distribution under the [CDDL or GPL
- * Version 2] license."  If you don't indicate a single choice of license, a
- * recipient has the option to distribute your version of this file under
- * either the CDDL, the GPL Version 2 or to extend the choice of license to
- * its licensees as provided above.  However, if you add GPL Version 2 code
- * and therefore, elected the GPL Version 2 license, then the option applies
- * only if the new code is made subject to such option by the copyright
- * holder.
- *
- *
- * This file incorporates work covered by the following copyright and
- * permission notice:
- *
- * Copyright 2004 The Apache Software Foundation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -151,6 +110,7 @@ public abstract class UpdateTagSupport extends BodyTagSupport
      * Prepares for execution by setting the initial state, such as
      * getting the <code>Connection</code>
      */
+    @Override
     public int doStartTag() throws JspException {
 
 	try {
@@ -168,13 +128,13 @@ public abstract class UpdateTagSupport extends BodyTagSupport
      * named by the <code>var</code> attribute in the scope specified
      * by the <code>scope</code> attribute, as an object that implements
      * the Result interface.
-     *
      * <p>The connection used to execute the statement comes either
      * from the <code>DataSource</code> specified by the
      * <code>dataSource</code> attribute, provided by a parent action
      * element, or is retrieved from a JSP scope  attribute
      * named <code>javax.servlet.jsp.jstl.sql.dataSource</code>.
      */
+    @Override
     public int doEndTag() throws JspException {
 	/*
 	 * Use the SQL statement specified by the sql attribute, if any,
@@ -183,8 +143,7 @@ public abstract class UpdateTagSupport extends BodyTagSupport
 	String sqlStatement = null;
 	if (sql != null) {
 	    sqlStatement = sql;
-	}
-	else if (bodyContent != null) {
+        } else if (bodyContent != null) {
 	    sqlStatement = bodyContent.getString();
 	}
 	if (sqlStatement == null || sqlStatement.trim().length() == 0) {
@@ -193,16 +152,26 @@ public abstract class UpdateTagSupport extends BodyTagSupport
 	}
 
 	int result = 0;
+        PreparedStatement ps = null;
 	try {
-	    PreparedStatement ps = conn.prepareStatement(sqlStatement);
+            ps = conn.prepareStatement(sqlStatement);
 	    setParameters(ps, parameters);
 	    result = ps.executeUpdate();
 	}
 	catch (Throwable e) {
 	    throw new JspException(sqlStatement + ": " + e.getMessage(), e);
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException sqe) {
+                    throw new JspException(sqe.getMessage(), sqe);
+                }
+            }
+        }
+        if (var != null) {
+            pageContext.setAttribute(var, new Integer(result), scope);
 	}
-	if (var != null)
-            pageContext.setAttribute(var, Integer.valueOf(result), scope);
 	return EVAL_PAGE;
     }
 
@@ -283,8 +252,7 @@ public abstract class UpdateTagSupport extends BodyTagSupport
     }
 
     private void setParameters(PreparedStatement ps, List parameters) 
-        throws SQLException
-    {
+            throws SQLException {
 	if (parameters != null) {
 	    for (int i = 0; i < parameters.size(); i++) {
                 /* The first parameter has index 1.  If a null

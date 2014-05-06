@@ -1,54 +1,13 @@
 /*
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
- *
- * Copyright (c) 1997-2010 Oracle and/or its affiliates. All rights reserved.
- *
- * The contents of this file are subject to the terms of either the GNU
- * General Public License Version 2 only ("GPL") or the Common Development
- * and Distribution License("CDDL") (collectively, the "License").  You
- * may not use this file except in compliance with the License.  You can
- * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
- * language governing permissions and limitations under the License.
- *
- * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
- *
- * GPL Classpath Exception:
- * Oracle designates this particular file as subject to the "Classpath"
- * exception as provided by Oracle in the GPL Version 2 section of the License
- * file that accompanied this code.
- *
- * Modifications:
- * If applicable, add the following below the License Header, with the fields
- * enclosed by brackets [] replaced by your own identifying information:
- * "Portions Copyright [year] [name of copyright owner]"
- *
- * Contributor(s):
- * If you wish your version of this file to be governed by only the CDDL or
- * only the GPL Version 2, indicate your decision by adding "[Contributor]
- * elects to include this software in this distribution under the [CDDL or GPL
- * Version 2] license."  If you don't indicate a single choice of license, a
- * recipient has the option to distribute your version of this file under
- * either the CDDL, the GPL Version 2 or to extend the choice of license to
- * its licensees as provided above.  However, if you add GPL Version 2 code
- * and therefore, elected the GPL Version 2 license, then the option applies
- * only if the new code is made subject to such option by the copyright
- * holder.
- *
- *
- * This file incorporates work covered by the following copyright and
- * permission notice:
- *
- * Copyright 2004 The Apache Software Foundation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -95,7 +54,7 @@ public abstract class ParseDateSupport extends BodyTagSupport {
     // Protected state
 
     protected String value;                      // 'value' attribute
-    protected boolean valueSpecified;	         // status
+    protected boolean valueSpecified;             // status
     protected String type;                       // 'type' attribute
     protected String pattern;                    // 'pattern' attribute
     protected Object timeZone;                   // 'timeZone' attribute
@@ -115,21 +74,21 @@ public abstract class ParseDateSupport extends BodyTagSupport {
     // Constructor and initialization
 
     public ParseDateSupport() {
-	super();
-	init();
+        super();
+        init();
     }
 
     private void init() {
-	type = dateStyle = timeStyle = null;
-	value = pattern = var = null;
-	valueSpecified = false;
-	timeZone = null;
-	scope = PageContext.PAGE_SCOPE;
-	parseLocale = null;
+        type = dateStyle = timeStyle = null;
+        value = pattern = var = null;
+        valueSpecified = false;
+        timeZone = null;
+        scope = PageContext.PAGE_SCOPE;
+        parseLocale = null;
     }
 
 
-   //*********************************************************************
+    //*********************************************************************
     // Tag attributes known at translation time
 
     public void setVar(String var) {
@@ -137,108 +96,114 @@ public abstract class ParseDateSupport extends BodyTagSupport {
     }
 
     public void setScope(String scope) {
-	this.scope = Util.getScope(scope);
+        this.scope = Util.getScope(scope);
     }
 
 
     //*********************************************************************
     // Tag logic
 
+    @Override
     public int doEndTag() throws JspException {
 
         String input = null;
 
         // determine the input by...
         if (valueSpecified) {
-	    // ... reading 'value' attribute
-	    input = value;
-	} else {
-	    // ... retrieving and trimming our body
-	    if (bodyContent != null && bodyContent.getString() != null)
-	        input = bodyContent.getString().trim();
-	}
+            // ... reading 'value' attribute
+            input = value;
+        } else {
+            // ... retrieving and trimming our body
+            if (bodyContent != null && bodyContent.getString() != null) {
+                input = bodyContent.getString().trim();
+            }
+        }
 
-	if ((input == null) || input.equals("")) {
-	    if (var != null) {
-		pageContext.removeAttribute(var, scope);
-	    }
-	    return EVAL_PAGE;
-	}
+        if ((input == null) || input.equals("")) {
+            if (var != null) {
+                pageContext.removeAttribute(var, scope);
+            }
+            return EVAL_PAGE;
+        }
 
-	/*
-	 * Set up parsing locale: Use locale specified via the 'parseLocale'
-	 * attribute (if present), or else determine page's locale.
-	 */
-	Locale locale = parseLocale;
-	if (locale == null)
-	    locale = SetLocaleSupport.getFormattingLocale(pageContext,
-                                                          this,
-                                                          true,
-                                                          false);
-	if (locale == null) {
-	    throw new JspException(
+        /*
+       * Set up parsing locale: Use locale specified via the 'parseLocale'
+       * attribute (if present), or else determine page's locale.
+       */
+        Locale locale = parseLocale;
+        if (locale == null) {
+            locale = SetLocaleSupport.getFormattingLocale(
+                    pageContext,
+                    this,
+                    false,
+                    DateFormat.getAvailableLocales());
+        }
+        if (locale == null) {
+            throw new JspException(
                     Resources.getMessage("PARSE_DATE_NO_PARSE_LOCALE"));
-	}
+        }
 
-	// Create parser
-	DateFormat parser = createParser(locale);
+        // Create parser
+        DateFormat parser = createParser(locale);
 
-	// Apply pattern, if present
-	if (pattern != null) {
-	    try {
-		((SimpleDateFormat) parser).applyPattern(pattern);
-	    } catch (ClassCastException cce) {
-		parser = new SimpleDateFormat(pattern, locale);
-	    }
-	}
+        // Apply pattern, if present
+        if (pattern != null) {
+            try {
+                ((SimpleDateFormat) parser).applyPattern(pattern);
+            } catch (ClassCastException cce) {
+                parser = new SimpleDateFormat(pattern, locale);
+            }
+        }
 
-	// Set time zone
-	TimeZone tz = null;
-	if ((timeZone instanceof String) && ((String) timeZone).equals("")) {
-	    timeZone = null;
-	}
-	if (timeZone != null) {
-	    if (timeZone instanceof String) {
-		tz = TimeZone.getTimeZone((String) timeZone);
-	    } else if (timeZone instanceof TimeZone) {
-		tz = (TimeZone) timeZone;
-	    } else {
-		throw new JspException(
-                    Resources.getMessage("PARSE_DATE_BAD_TIMEZONE"));
-	    }
-	} else {
-	    tz = TimeZoneSupport.getTimeZone(pageContext, this);
-	}
-	if (tz != null) {
-	    parser.setTimeZone(tz);
-	}
+        // Set time zone
+        TimeZone tz = null;
+        if ((timeZone instanceof String) && ((String) timeZone).equals("")) {
+            timeZone = null;
+        }
+        if (timeZone != null) {
+            if (timeZone instanceof String) {
+                tz = TimeZone.getTimeZone((String) timeZone);
+            } else if (timeZone instanceof TimeZone) {
+                tz = (TimeZone) timeZone;
+            } else {
+                throw new JspException(
+                        Resources.getMessage("PARSE_DATE_BAD_TIMEZONE"));
+            }
+        } else {
+            tz = TimeZoneSupport.getTimeZone(pageContext, this);
+        }
+        if (tz != null) {
+            parser.setTimeZone(tz);
+        }
 
-	// Parse date
-	Date parsed = null;
-	try {
-	    parsed = parser.parse(input);
-	} catch (ParseException pe) {
-	    throw new JspException(
-	            Resources.getMessage("PARSE_DATE_PARSE_ERROR", input),
-		    pe);
-	}
+        // Parse date
+        Date parsed = null;
+        try {
+            parsed = parser.parse(input);
+        } catch (ParseException pe) {
+            throw new JspException(
+                    Resources.getMessage("PARSE_DATE_PARSE_ERROR", input),
+                    pe);
+        }
 
-	if (var != null) {
-	    pageContext.setAttribute(var, parsed, scope);	
-	} else {
-	    try {
-		pageContext.getOut().print(parsed);
-	    } catch (IOException ioe) {
-		throw new JspTagException(ioe.toString(), ioe);
-	    }
-	}
+        if (var != null) {
+            pageContext.setAttribute(var, parsed, scope);
+        } else {
+            try {
+                pageContext.getOut().print(parsed);
+            } catch (IOException ioe) {
+                throw new JspTagException(ioe.toString(), ioe);
+            }
+        }
 
-	return EVAL_PAGE;
+        return EVAL_PAGE;
     }
 
     // Releases any resources we may have (or inherit)
+
+    @Override
     public void release() {
-	init();
+        init();
     }
 
 
@@ -246,28 +211,28 @@ public abstract class ParseDateSupport extends BodyTagSupport {
     // Private utility methods
 
     private DateFormat createParser(Locale loc) throws JspException {
-	DateFormat parser = null;
+        DateFormat parser = null;
 
-	if ((type == null) || DATE.equalsIgnoreCase(type)) {
-	    parser = DateFormat.getDateInstance(
-	        Util.getStyle(dateStyle, "PARSE_DATE_INVALID_DATE_STYLE"),
-		loc);
-	} else if (TIME.equalsIgnoreCase(type)) {
-	    parser = DateFormat.getTimeInstance(
-	        Util.getStyle(timeStyle, "PARSE_DATE_INVALID_TIME_STYLE"),
-		loc);
-	} else if (DATETIME.equalsIgnoreCase(type)) {
-	    parser = DateFormat.getDateTimeInstance(
-	        Util.getStyle(dateStyle, "PARSE_DATE_INVALID_DATE_STYLE"),
-		Util.getStyle(timeStyle, "PARSE_DATE_INVALID_TIME_STYLE"),
-		loc);
-	} else {
-	    throw new JspException(
+        if ((type == null) || DATE.equalsIgnoreCase(type)) {
+            parser = DateFormat.getDateInstance(
+                    Util.getStyle(dateStyle, "PARSE_DATE_INVALID_DATE_STYLE"),
+                    loc);
+        } else if (TIME.equalsIgnoreCase(type)) {
+            parser = DateFormat.getTimeInstance(
+                    Util.getStyle(timeStyle, "PARSE_DATE_INVALID_TIME_STYLE"),
+                    loc);
+        } else if (DATETIME.equalsIgnoreCase(type)) {
+            parser = DateFormat.getDateTimeInstance(
+                    Util.getStyle(dateStyle, "PARSE_DATE_INVALID_DATE_STYLE"),
+                    Util.getStyle(timeStyle, "PARSE_DATE_INVALID_TIME_STYLE"),
+                    loc);
+        } else {
+            throw new JspException(
                     Resources.getMessage("PARSE_DATE_INVALID_TYPE", type));
-	}
+        }
 
-	parser.setLenient(false);
+        parser.setLenient(false);
 
-	return parser;
+        return parser;
     }
 }

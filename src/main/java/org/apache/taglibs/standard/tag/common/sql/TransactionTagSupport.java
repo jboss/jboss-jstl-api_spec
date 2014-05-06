@@ -1,54 +1,13 @@
 /*
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
- *
- * Copyright (c) 1997-2010 Oracle and/or its affiliates. All rights reserved.
- *
- * The contents of this file are subject to the terms of either the GNU
- * General Public License Version 2 only ("GPL") or the Common Development
- * and Distribution License("CDDL") (collectively, the "License").  You
- * may not use this file except in compliance with the License.  You can
- * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
- * language governing permissions and limitations under the License.
- *
- * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
- *
- * GPL Classpath Exception:
- * Oracle designates this particular file as subject to the "Classpath"
- * exception as provided by Oracle in the GPL Version 2 section of the License
- * file that accompanied this code.
- *
- * Modifications:
- * If applicable, add the following below the License Header, with the fields
- * enclosed by brackets [] replaced by your own identifying information:
- * "Portions Copyright [year] [name of copyright owner]"
- *
- * Contributor(s):
- * If you wish your version of this file to be governed by only the CDDL or
- * only the GPL Version 2, indicate your decision by adding "[Contributor]
- * elects to include this software in this distribution under the [CDDL or GPL
- * Version 2] license."  If you don't indicate a single choice of license, a
- * recipient has the option to distribute your version of this file under
- * either the CDDL, the GPL Version 2 or to extend the choice of license to
- * its licensees as provided above.  However, if you add GPL Version 2 code
- * and therefore, elected the GPL Version 2 license, then the option applies
- * only if the new code is made subject to such option by the copyright
- * holder.
- *
- *
- * This file incorporates work covered by the following copyright and
- * permission notice:
- *
- * Copyright 2004 The Apache Software Foundation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -71,25 +30,25 @@ import org.apache.taglibs.standard.resources.Resources;
 
 
 /**
- * <p>Tag handler for &lt;Transaction&gt; in JSTL.  
- * 
+ * <p>Tag handler for &lt;Transaction&gt; in JSTL.
+ *
  * @author Hans Bergsten
  */
 
-public abstract class TransactionTagSupport extends TagSupport 
-    implements TryCatchFinally {
+public abstract class TransactionTagSupport extends TagSupport
+        implements TryCatchFinally {
 
     //*********************************************************************
     // Private constants
 
     private static final String TRANSACTION_READ_COMMITTED
-	= "read_committed";
+            = "read_committed";
     private static final String TRANSACTION_READ_UNCOMMITTED
-	= "read_uncommitted";
+            = "read_uncommitted";
     private static final String TRANSACTION_REPEATABLE_READ
-	= "repeatable_read";
+            = "repeatable_read";
     private static final String TRANSACTION_SERIALIZABLE
-	= "serializable";
+            = "serializable";
 
 
     //*********************************************************************
@@ -111,15 +70,11 @@ public abstract class TransactionTagSupport extends TagSupport
     // Constructor and initialization
 
     public TransactionTagSupport() {
-	super();
-	init();
-    }
-
-    private void init() {
-	conn = null;
-	dataSourceSpecified = false;
-	rawDataSource = null;
-	isolation = Connection.TRANSACTION_NONE;
+        super();
+        conn = null;
+        dataSourceSpecified = false;
+        rawDataSource = null;
+        isolation = Connection.TRANSACTION_NONE;
     }
 
 
@@ -131,63 +86,65 @@ public abstract class TransactionTagSupport extends TagSupport
      * getting the <code>Connection</code> and preparing it for
      * the transaction.
      */
+    @Override
     public int doStartTag() throws JspException {
 
-	if ((rawDataSource == null) && dataSourceSpecified) {
-	    throw new JspException(
-                Resources.getMessage("SQL_DATASOURCE_NULL"));
-	}
+        if ((rawDataSource == null) && dataSourceSpecified) {
+            throw new JspException(
+                    Resources.getMessage("SQL_DATASOURCE_NULL"));
+        }
 
         DataSource dataSource = DataSourceUtil.getDataSource(rawDataSource,
-							     pageContext);
+                pageContext);
 
-	try {
-	    conn = dataSource.getConnection();
-	    origIsolation = conn.getTransactionIsolation();
-	    if (origIsolation == Connection.TRANSACTION_NONE) {
-		throw new JspTagException(
-                    Resources.getMessage("TRANSACTION_NO_SUPPORT"));
-	    }
-	    if ((isolation != Connection.TRANSACTION_NONE)
-		    && (isolation != origIsolation)) {
-		conn.setTransactionIsolation(isolation);
-	    }
-	    conn.setAutoCommit(false);
-	} catch (SQLException e) {
-	    throw new JspTagException(
-                Resources.getMessage("ERROR_GET_CONNECTION",
-				     e.toString()), e);
-	} 
+        try {
+            conn = dataSource.getConnection();
+            origIsolation = conn.getTransactionIsolation();
+            if (origIsolation == Connection.TRANSACTION_NONE) {
+                throw new JspTagException(
+                        Resources.getMessage("TRANSACTION_NO_SUPPORT"));
+            }
+            if ((isolation != Connection.TRANSACTION_NONE)
+                    && (isolation != origIsolation)) {
+                conn.setTransactionIsolation(isolation);
+            }
+            conn.setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new JspTagException(
+                    Resources.getMessage("ERROR_GET_CONNECTION",
+                            e.toString()), e);
+        }
 
-	return EVAL_BODY_INCLUDE;
+        return EVAL_BODY_INCLUDE;
     }
 
     /**
      * Commits the transaction.
      */
+    @Override
     public int doEndTag() throws JspException {
-	try {
-	    conn.commit();
-	} catch (SQLException e) {
-	    throw new JspTagException(
-                Resources.getMessage("TRANSACTION_COMMIT_ERROR",
-				     e.toString()), e);
-	}
-	return EVAL_PAGE;
+        try {
+            conn.commit();
+        } catch (SQLException e) {
+            throw new JspTagException(
+                    Resources.getMessage("TRANSACTION_COMMIT_ERROR",
+                            e.toString()), e);
+        }
+        return EVAL_PAGE;
     }
 
     /**
      * Rollbacks the transaction and rethrows the Throwable.
      */
     public void doCatch(Throwable t) throws Throwable {
-	if (conn != null) {
-	    try {
-		conn.rollback();
-	    } catch (SQLException e) {
-		// Ignore to not hide orignal exception
-	    }
-	}
-	throw t;
+        if (conn != null) {
+            try {
+                conn.rollback();
+            } catch (SQLException e) {
+                // Ignore to not hide orignal exception
+            }
+        }
+        throw t;
     }
 
     /**
@@ -195,24 +152,28 @@ public abstract class TransactionTagSupport extends TagSupport
      * closes it.
      */
     public void doFinally() {
-	if (conn != null) {
-	    try {
-		if ((isolation != Connection.TRANSACTION_NONE)
-		        && (isolation != origIsolation)) {
-		    conn.setTransactionIsolation(origIsolation);
-		}
-		conn.setAutoCommit(true);
-		conn.close();
-	    } catch (SQLException e) {
-		// Not much we can do
-	    }
-	}
-	conn = null;
+        if (conn != null) {
+            try {
+                if ((isolation != Connection.TRANSACTION_NONE)
+                        && (isolation != origIsolation)) {
+                    conn.setTransactionIsolation(origIsolation);
+                }
+                conn.setAutoCommit(true);
+                conn.close();
+            } catch (SQLException e) {
+                // Not much we can do
+            }
+        }
+        conn = null;
+        isolation = Connection.TRANSACTION_NONE;
     }
 
     // Releases any resources we may have (or inherit)
+
+    @Override
     public void release() {
-	init();
+        dataSourceSpecified = false;
+        rawDataSource = null;
     }
 
 
@@ -224,18 +185,18 @@ public abstract class TransactionTagSupport extends TagSupport
      */
     public void setIsolation(String iso) throws JspTagException {
 
-	if (TRANSACTION_READ_COMMITTED.equals(iso)) {
-	    isolation = Connection.TRANSACTION_READ_COMMITTED;
-	} else if (TRANSACTION_READ_UNCOMMITTED.equals(iso)) {
-	    isolation = Connection.TRANSACTION_READ_UNCOMMITTED;
-	} else if (TRANSACTION_REPEATABLE_READ.equals(iso)) {
-	    isolation = Connection.TRANSACTION_REPEATABLE_READ;
-	} else if (TRANSACTION_SERIALIZABLE.equals(iso)) {
-	    isolation = Connection.TRANSACTION_SERIALIZABLE;
-	} else {
-	    throw new JspTagException(
-                Resources.getMessage("TRANSACTION_INVALID_ISOLATION"));
-	}
+        if (TRANSACTION_READ_COMMITTED.equals(iso)) {
+            isolation = Connection.TRANSACTION_READ_COMMITTED;
+        } else if (TRANSACTION_READ_UNCOMMITTED.equals(iso)) {
+            isolation = Connection.TRANSACTION_READ_UNCOMMITTED;
+        } else if (TRANSACTION_REPEATABLE_READ.equals(iso)) {
+            isolation = Connection.TRANSACTION_REPEATABLE_READ;
+        } else if (TRANSACTION_SERIALIZABLE.equals(iso)) {
+            isolation = Connection.TRANSACTION_SERIALIZABLE;
+        } else {
+            throw new JspTagException(
+                    Resources.getMessage("TRANSACTION_INVALID_ISOLATION"));
+        }
     }
 
     /**
@@ -243,6 +204,6 @@ public abstract class TransactionTagSupport extends TagSupport
      * the Connection.
      */
     public Connection getSharedConnection() {
-	return conn;
+        return conn;
     }
 }

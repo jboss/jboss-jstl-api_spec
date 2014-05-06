@@ -1,54 +1,13 @@
 /*
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
- *
- * Copyright (c) 1997-2010 Oracle and/or its affiliates. All rights reserved.
- *
- * The contents of this file are subject to the terms of either the GNU
- * General Public License Version 2 only ("GPL") or the Common Development
- * and Distribution License("CDDL") (collectively, the "License").  You
- * may not use this file except in compliance with the License.  You can
- * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
- * language governing permissions and limitations under the License.
- *
- * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
- *
- * GPL Classpath Exception:
- * Oracle designates this particular file as subject to the "Classpath"
- * exception as provided by Oracle in the GPL Version 2 section of the License
- * file that accompanied this code.
- *
- * Modifications:
- * If applicable, add the following below the License Header, with the fields
- * enclosed by brackets [] replaced by your own identifying information:
- * "Portions Copyright [year] [name of copyright owner]"
- *
- * Contributor(s):
- * If you wish your version of this file to be governed by only the CDDL or
- * only the GPL Version 2, indicate your decision by adding "[Contributor]
- * elects to include this software in this distribution under the [CDDL or GPL
- * Version 2] license."  If you don't indicate a single choice of license, a
- * recipient has the option to distribute your version of this file under
- * either the CDDL, the GPL Version 2 or to extend the choice of license to
- * its licensees as provided above.  However, if you add GPL Version 2 code
- * and therefore, elected the GPL Version 2 license, then the option applies
- * only if the new code is made subject to such option by the copyright
- * holder.
- *
- *
- * This file incorporates work covered by the following copyright and
- * permission notice:
- *
- * Copyright 2004 The Apache Software Foundation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -89,7 +48,6 @@ public abstract class FormatDateSupport extends TagSupport {
     private static final String TIME = "time";
     private static final String DATETIME = "both";
 
-
     //*********************************************************************
     // Protected state
 
@@ -112,20 +70,20 @@ public abstract class FormatDateSupport extends TagSupport {
     // Constructor and initialization
 
     public FormatDateSupport() {
-	super();
-	init();
+        super();
+        init();
     }
 
     private void init() {
-	type = dateStyle = timeStyle = null;
-	pattern = var = null;
-	value = null;
-	timeZone = null;
-	scope = PageContext.PAGE_SCOPE;
+        type = dateStyle = timeStyle = null;
+        pattern = var = null;
+        value = null;
+        timeZone = null;
+        scope = PageContext.PAGE_SCOPE;
     }
 
 
-   //*********************************************************************
+    //*********************************************************************
     // Tag attributes known at translation time
 
     public void setVar(String var) {
@@ -133,7 +91,7 @@ public abstract class FormatDateSupport extends TagSupport {
     }
 
     public void setScope(String scope) {
-	this.scope = Util.getScope(scope);
+        this.scope = Util.getScope(scope);
     }
 
 
@@ -143,105 +101,98 @@ public abstract class FormatDateSupport extends TagSupport {
     /*
      * Formats the given date and time.
      */
+
+    @Override
     public int doEndTag() throws JspException {
 
-	String formatted = null;
+        String formatted = null;
 
-	if (value == null) {
-	    if (var != null) {
-		pageContext.removeAttribute(var, scope);
-	    }
-	    return EVAL_PAGE;
-	}
+        if (value == null) {
+            if (var != null) {
+                pageContext.removeAttribute(var, scope);
+            }
+            return EVAL_PAGE;
+        }
 
-	// Create formatter
-	Locale locale = SetLocaleSupport.getFormattingLocale(pageContext,
-                                                             this,
-                                                             true,
-                                                             true);
-	if (locale != null) {
-	    DateFormat formatter = createFormatter(locale);
+        // Create formatter
+        Locale locale = SetLocaleSupport.getFormattingLocale(
+                pageContext,
+                this,
+                true,
+                DateFormat.getAvailableLocales());
 
-	    // Apply pattern, if present
-	    if (pattern != null) {
-		try {
-		    ((SimpleDateFormat) formatter).applyPattern(pattern);
-		} catch (ClassCastException cce) {
-		    formatter = new SimpleDateFormat(pattern, locale);
-		}
-	    }
+        if (locale != null) {
+            DateFormat formatter = createFormatter(locale, pattern);
 
-	    // Set time zone
-	    TimeZone tz = null;
-	    if ((timeZone instanceof String)
-		&& ((String) timeZone).equals("")) {
-		timeZone = null;
-	    }
-	    if (timeZone != null) {
-		if (timeZone instanceof String) {
-		    tz = TimeZone.getTimeZone((String) timeZone);
-		} else if (timeZone instanceof TimeZone) {
-		    tz = (TimeZone) timeZone;
-		} else {
-		    throw new JspTagException(
+            // Set time zone
+            TimeZone tz = null;
+            if ((timeZone instanceof String)
+                    && ((String) timeZone).equals("")) {
+                timeZone = null;
+            }
+            if (timeZone != null) {
+                if (timeZone instanceof String) {
+                    tz = TimeZone.getTimeZone((String) timeZone);
+                } else if (timeZone instanceof TimeZone) {
+                    tz = (TimeZone) timeZone;
+                } else {
+                    throw new JspTagException(
                             Resources.getMessage("FORMAT_DATE_BAD_TIMEZONE"));
-		}
-	    } else {
-		tz = TimeZoneSupport.getTimeZone(pageContext, this);
-	    }
-	    if (tz != null) {
-		formatter.setTimeZone(tz);
-	    }
-	    formatted = formatter.format(value);
-	} else {
-	    // no formatting locale available, use Date.toString()
-	    formatted = value.toString();
-	}
+                }
+            } else {
+                tz = TimeZoneSupport.getTimeZone(pageContext, this);
+            }
+            if (tz != null) {
+                formatter.setTimeZone(tz);
+            }
+            formatted = formatter.format(value);
+        } else {
+            // no formatting locale available, use Date.toString()
+            formatted = value.toString();
+        }
 
-	if (var != null) {
-	    pageContext.setAttribute(var, formatted, scope);	
-	} else {
-	    try {
-		pageContext.getOut().print(formatted);
-	    } catch (IOException ioe) {
-		throw new JspTagException(ioe.toString(), ioe);
-	    }
-	}
+        if (var != null) {
+            pageContext.setAttribute(var, formatted, scope);
+        } else {
+            try {
+                pageContext.getOut().print(formatted);
+            } catch (IOException ioe) {
+                throw new JspTagException(ioe.toString(), ioe);
+            }
+        }
 
-	return EVAL_PAGE;
+        return EVAL_PAGE;
     }
 
     // Releases any resources we may have (or inherit)
+
+    @Override
     public void release() {
-	init();
+        init();
     }
 
 
     //*********************************************************************
     // Private utility methods
 
-    private DateFormat createFormatter(Locale loc) throws JspException {
-	DateFormat formatter = null;
+    private DateFormat createFormatter(Locale loc, String pattern) throws JspException {
+        // Apply pattern, if present
+        if (pattern != null) {
+            return new SimpleDateFormat(pattern, loc);
+        }
 
-	if ((type == null) || DATE.equalsIgnoreCase(type)) {
-	    formatter = DateFormat.getDateInstance(
-	        Util.getStyle(dateStyle, "FORMAT_DATE_INVALID_DATE_STYLE"),
-		loc);
-	} else if (TIME.equalsIgnoreCase(type)) {
-	    formatter = DateFormat.getTimeInstance(
-	        Util.getStyle(timeStyle, "FORMAT_DATE_INVALID_TIME_STYLE"),
-		loc);
-	} else if (DATETIME.equalsIgnoreCase(type)) {
-	    formatter = DateFormat.getDateTimeInstance(
-	        Util.getStyle(dateStyle, "FORMAT_DATE_INVALID_DATE_STYLE"),
-		Util.getStyle(timeStyle, "FORMAT_DATE_INVALID_TIME_STYLE"),
-		loc);
-	} else {
-	    throw new JspException(
-                    Resources.getMessage("FORMAT_DATE_INVALID_TYPE", 
-					 type));
-	}
-
-	return formatter;
+        if ((type == null) || DATE.equalsIgnoreCase(type)) {
+            int style = Util.getStyle(dateStyle, "FORMAT_DATE_INVALID_DATE_STYLE");
+            return DateFormat.getDateInstance(style, loc);
+        } else if (TIME.equalsIgnoreCase(type)) {
+            int style = Util.getStyle(timeStyle, "FORMAT_DATE_INVALID_TIME_STYLE");
+            return DateFormat.getTimeInstance(style, loc);
+        } else if (DATETIME.equalsIgnoreCase(type)) {
+            int style1 = Util.getStyle(dateStyle, "FORMAT_DATE_INVALID_DATE_STYLE");
+            int style2 = Util.getStyle(timeStyle, "FORMAT_DATE_INVALID_TIME_STYLE");
+            return DateFormat.getDateTimeInstance(style1, style2, loc);
+        } else {
+            throw new JspException(Resources.getMessage("FORMAT_DATE_INVALID_TYPE", type));
+        }
     }
 }

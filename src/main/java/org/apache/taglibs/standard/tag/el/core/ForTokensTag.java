@@ -1,54 +1,13 @@
 /*
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
- *
- * Copyright (c) 1997-2010 Oracle and/or its affiliates. All rights reserved.
- *
- * The contents of this file are subject to the terms of either the GNU
- * General Public License Version 2 only ("GPL") or the Common Development
- * and Distribution License("CDDL") (collectively, the "License").  You
- * may not use this file except in compliance with the License.  You can
- * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
- * language governing permissions and limitations under the License.
- *
- * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
- *
- * GPL Classpath Exception:
- * Oracle designates this particular file as subject to the "Classpath"
- * exception as provided by Oracle in the GPL Version 2 section of the License
- * file that accompanied this code.
- *
- * Modifications:
- * If applicable, add the following below the License Header, with the fields
- * enclosed by brackets [] replaced by your own identifying information:
- * "Portions Copyright [year] [name of copyright owner]"
- *
- * Contributor(s):
- * If you wish your version of this file to be governed by only the CDDL or
- * only the GPL Version 2, indicate your decision by adding "[Contributor]
- * elects to include this software in this distribution under the [CDDL or GPL
- * Version 2] license."  If you don't indicate a single choice of license, a
- * recipient has the option to distribute your version of this file under
- * either the CDDL, the GPL Version 2 or to extend the choice of license to
- * its licensees as provided above.  However, if you add GPL Version 2 code
- * and therefore, elected the GPL Version 2 license, then the option applies
- * only if the new code is made subject to such option by the copyright
- * holder.
- *
- *
- * This file incorporates work covered by the following copyright and
- * permission notice:
- *
- * Copyright 2004 The Apache Software Foundation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -73,9 +32,8 @@ import org.apache.taglibs.standard.tag.common.core.NullAttributeException;
  * @author Shawn Bayern
  */
 public class ForTokensTag
-    extends ForTokensSupport
-    implements LoopTag, IterationTag
-{
+        extends ForTokensSupport
+        implements LoopTag, IterationTag {
 
     //*********************************************************************
     // 'Private' state (implementation details)
@@ -83,8 +41,8 @@ public class ForTokensTag
     private String begin_;                      // raw EL-based property
     private String end_;                        // raw EL-based property
     private String step_;                       // raw EL-based property
-    private String items_;			// raw EL-based property
-    private String delims_;			// raw EL-based property
+    private String items_;            // raw EL-based property
+    private String delims_;            // raw EL-based property
 
 
     //*********************************************************************
@@ -100,17 +58,19 @@ public class ForTokensTag
     // Tag logic
 
     /* Begins iterating by processing the first item. */
+
     public int doStartTag() throws JspException {
 
         // evaluate any expressions we were passed, once per invocation
         evaluateExpressions();
 
-	// chain to the parent implementation
-	return super.doStartTag();
+        // chain to the parent implementation
+        return super.doStartTag();
     }
 
 
     // Releases any resources we may have (or inherit)
+
     public void release() {
         super.release();
         init();
@@ -121,31 +81,36 @@ public class ForTokensTag
     // Accessor methods
 
     // for EL-based attribute
+
     public void setBegin(String begin_) {
         this.begin_ = begin_;
         this.beginSpecified = true;
     }
 
     // for EL-based attribute
+
     public void setEnd(String end_) {
         this.end_ = end_;
         this.endSpecified = true;
     }
 
     // for EL-based attribute
+
     public void setStep(String step_) {
         this.step_ = step_;
         this.stepSpecified = true;
     }
 
     // for EL-based attribute
+
     public void setItems(String items_) {
         this.items_ = items_;
     }
 
     // for EL-based attribute
+
     public void setDelims(String delims_) {
-	this.delims_ = delims_;
+        this.delims_ = delims_;
     }
 
 
@@ -153,16 +118,18 @@ public class ForTokensTag
     // Private (utility) methods
 
     // (re)initializes state (during release() or construction)
+
     private void init() {
         // defaults for interface with page author
         begin_ = null;          // (no expression)
         end_ = null;            // (no expression)
         step_ = null;           // (no expression)
-	items_ = null;		// (no expression)
-	delims_ = null;		// (no expression)
+        items_ = null;        // (no expression)
+        delims_ = null;        // (no expression)
     }
 
     /* Evaluates expressions as necessary */
+
     private void evaluateExpressions() throws JspException {
         /*
          * Note: we don't check for type mismatches here; we assume
@@ -172,47 +139,52 @@ public class ForTokensTag
          * propagate up.
          */
 
-       if (begin_ != null) {
+        if (begin_ != null) {
             Object r = ExpressionEvaluatorManager.evaluate(
-                "begin", begin_, Integer.class, this, pageContext);
-            if (r == null)
+                    "begin", begin_, Integer.class, this, pageContext);
+            if (r == null) {
                 throw new NullAttributeException("forTokens", "begin");
+            }
             begin = ((Integer) r).intValue();
             validateBegin();
         }
 
         if (end_ != null) {
             Object r = ExpressionEvaluatorManager.evaluate(
-                "end", end_, Integer.class, this, pageContext);
-            if (r == null)
+                    "end", end_, Integer.class, this, pageContext);
+            if (r == null) {
                 throw new NullAttributeException("forTokens", "end");
+            }
             end = ((Integer) r).intValue();
             validateEnd();
         }
 
         if (step_ != null) {
             Object r = ExpressionEvaluatorManager.evaluate(
-                "step", step_, Integer.class, this, pageContext);
-            if (r == null)
+                    "step", step_, Integer.class, this, pageContext);
+            if (r == null) {
                 throw new NullAttributeException("forTokens", "step");
+            }
             step = ((Integer) r).intValue();
             validateStep();
         }
 
         if (items_ != null) {
             items = (String) ExpressionEvaluatorManager.evaluate(
-                "items", items_, String.class, this, pageContext);
-	    // use the empty string to indicate "no iteration"
-	    if (items == null)
-		items = "";
-	}
+                    "items", items_, String.class, this, pageContext);
+            // use the empty string to indicate "no iteration"
+            if (items == null) {
+                items = "";
+            }
+        }
 
         if (delims_ != null) {
             delims = (String) ExpressionEvaluatorManager.evaluate(
-                "delims", delims_, String.class, this, pageContext);
-	    // use the empty string to cause monolithic tokenization
-	    if (delims == null)
-		delims = "";
-	}
+                    "delims", delims_, String.class, this, pageContext);
+            // use the empty string to cause monolithic tokenization
+            if (delims == null) {
+                delims = "";
+            }
+        }
     }
 }

@@ -1,51 +1,10 @@
 /*
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
- *
- * Copyright (c) 1997-2010 Oracle and/or its affiliates. All rights reserved.
- *
- * The contents of this file are subject to the terms of either the GNU
- * General Public License Version 2 only ("GPL") or the Common Development
- * and Distribution License("CDDL") (collectively, the "License").  You
- * may not use this file except in compliance with the License.  You can
- * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
- * language governing permissions and limitations under the License.
- *
- * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
- *
- * GPL Classpath Exception:
- * Oracle designates this particular file as subject to the "Classpath"
- * exception as provided by Oracle in the GPL Version 2 section of the License
- * file that accompanied this code.
- *
- * Modifications:
- * If applicable, add the following below the License Header, with the fields
- * enclosed by brackets [] replaced by your own identifying information:
- * "Portions Copyright [year] [name of copyright owner]"
- *
- * Contributor(s):
- * If you wish your version of this file to be governed by only the CDDL or
- * only the GPL Version 2, indicate your decision by adding "[Contributor]
- * elects to include this software in this distribution under the [CDDL or GPL
- * Version 2] license."  If you don't indicate a single choice of license, a
- * recipient has the option to distribute your version of this file under
- * either the CDDL, the GPL Version 2 or to extend the choice of license to
- * its licensees as provided above.  However, if you add GPL Version 2 code
- * and therefore, elected the GPL Version 2 license, then the option applies
- * only if the new code is made subject to such option by the copyright
- * holder.
- *
- *
- * This file incorporates work covered by the following copyright and
- * permission notice:
- *
- * Copyright 2004 The Apache Software Foundation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -73,14 +32,12 @@ import javax.servlet.jsp.jstl.sql.Result;
  * It's represented as a <tt>Result</tt> implementation, capable of 
  * returing an array of <tt>Row</tt> objects containing a <tt>Column</tt> 
  * instance for each column in the row.</p>
- *
  * <p>Note -- this is a private copy for the RI to avoid making the
  * corresponding class in javax.servlet.* public.</p>
  *
  * @author Hans Bergsten
  * @author Justyna Horwat
  */
-
 public class ResultImpl implements Result {
     private List rowMap;
     private List rowByIndex;
@@ -88,18 +45,40 @@ public class ResultImpl implements Result {
     private boolean isLimited;
 
     /**
+     * Build a <code>Result</code> object from a <code>ResultSet</code> object.
+     *
+     * @param rs an open <tt>ResultSet</tt>, positioned before the first row
+     * @throws SQLException if a database error occurs
+     */
+    public ResultImpl(ResultSet rs) throws SQLException {
+        this(rs, -1, -1);
+    }
+
+    /**
+     * Build a <code>Result</code> object from a <code>ResultSet</code> object.
+     *
+     * @param rs      an open <tt>ResultSet</tt>, positioned before the first row
+     * @param maxRows query maximum rows limit
+     * @throws SQLException if a database error occurs
+     */
+    public ResultImpl(ResultSet rs, int maxRows) throws SQLException {
+        // Matching API in ResultSupport - apologies for the bad 
+        // order of default parameters
+        this(rs, -1, maxRows);
+    }
+
+    /**
      * This constructor reads the ResultSet and saves a cached
      * copy.
      *
      * @param rs an open <tt>ResultSet</tt>, positioned before the first
      * row
-     * @param startRow, beginning row to be cached
-     * @param maxRows, query maximum rows limit
-     * @exception if a database error occurs
+     * @param startRow beginning row to be cached
+     * @param maxRows  query maximum rows limit
+     * @throws SQLException if a database error occurs
      */
     public ResultImpl(ResultSet rs, int startRow, int maxRows)
-        throws SQLException 
-    {
+            throws SQLException {
         rowMap = new ArrayList();
         rowByIndex = new ArrayList();
 
