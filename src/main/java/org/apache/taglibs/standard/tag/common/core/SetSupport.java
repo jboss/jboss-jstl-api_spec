@@ -101,7 +101,8 @@ public class SetSupport extends BodyTagSupport {
     // Construction and initialization
 
     /**
-     * Constructs a new handler.  As with TagSupport, subclasses should
+     * Constructs a new handler.  As with TagS
+     * upport, subclasses should
      * not provide other constructors and are expected to call the
      * superclass constructor.
      */
