@@ -16,6 +16,11 @@
     <name>JavaServer Pages(TM) Standard Tag Library 1.2 API</name>
     <description>JSR 52: JavaServer Pages(TM) Standard Tag Library 1.2 API</description>
 
+    <properties>
+        <maven.compiler.target>1.6</maven.compiler.target>
+        <maven.compiler.source>1.6</maven.compiler.source>
+    </properties>
+
     <licenses>
         <license>
             <name>CDDL or GPLv2 with exceptions</name>
