@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
-        <version>14</version>
+        <version>19</version>
     </parent>
 
     <groupId>org.jboss.spec.javax.servlet.jstl</groupId>
@@ -33,11 +33,6 @@
 
     <name>JavaServer Pages(TM) Standard Tag Library 1.2 API</name>
     <description>JSR 52: JavaServer Pages(TM) Standard Tag Library 1.2 API</description>
-
-    <properties>
-        <maven.compiler.target>1.6</maven.compiler.target>
-        <maven.compiler.source>1.6</maven.compiler.source>
-    </properties>
 
     <licenses>
         <license>
