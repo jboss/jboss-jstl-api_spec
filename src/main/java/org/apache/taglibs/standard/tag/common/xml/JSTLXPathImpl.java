@@ -67,6 +67,7 @@ import javax.xml.xpath.XPathFunctionResolver;
 import javax.xml.xpath.XPathVariableResolver;
 import javax.xml.xpath.XPathExpression;
 
+import org.apache.taglibs.standard.util.XmlUtil;
 import org.apache.xalan.res.XSLMessages;
 import org.apache.xml.dtm.DTM;
 import org.apache.xpath.jaxp.JAXPVariableStack;
@@ -199,26 +200,7 @@ public class JSTLXPathImpl implements javax.xml.xpath.XPath {
     private static Document d = null;
     
     private static DocumentBuilder getParser() {
-        try {
-            // we'd really like to cache those DocumentBuilders, but we can't because:
-            // 1. thread safety. parsers are not thread-safe, so at least
-            //    we need one instance per a thread.
-            // 2. parsers are non-reentrant, so now we are looking at having a
-            // pool of parsers.
-            // 3. then the class loading issue. The look-up procedure of
-            //    DocumentBuilderFactory.newInstance() depends on context class loader
-            //    and system properties, which may change during the execution of JVM.
-            //
-            // so we really have to create a fresh DocumentBuilder every time we need one
-            // - KK
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            dbf.setNamespaceAware( true );
-            dbf.setValidating( false );
-            return dbf.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            // this should never happen with a well-behaving JAXP implementation. 
-            throw new Error(e);
-        }
+        return XmlUtil.newDocumentBuilder();
     }
 
     private static Document getDummyDocument( ) {

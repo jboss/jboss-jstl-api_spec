@@ -1,51 +1,10 @@
 /*
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
- *
- * Copyright (c) 1997-2010 Oracle and/or its affiliates. All rights reserved.
- *
- * The contents of this file are subject to the terms of either the GNU
- * General Public License Version 2 only ("GPL") or the Common Development
- * and Distribution License("CDDL") (collectively, the "License").  You
- * may not use this file except in compliance with the License.  You can
- * obtain a copy of the License at
- * https://glassfish.dev.java.net/public/CDDL+GPL_1_1.html
- * or packager/legal/LICENSE.txt.  See the License for the specific
- * language governing permissions and limitations under the License.
- *
- * When distributing the software, include this License Header Notice in each
- * file and include the License file at packager/legal/LICENSE.txt.
- *
- * GPL Classpath Exception:
- * Oracle designates this particular file as subject to the "Classpath"
- * exception as provided by Oracle in the GPL Version 2 section of the License
- * file that accompanied this code.
- *
- * Modifications:
- * If applicable, add the following below the License Header, with the fields
- * enclosed by brackets [] replaced by your own identifying information:
- * "Portions Copyright [year] [name of copyright owner]"
- *
- * Contributor(s):
- * If you wish your version of this file to be governed by only the CDDL or
- * only the GPL Version 2, indicate your decision by adding "[Contributor]
- * elects to include this software in this distribution under the [CDDL or GPL
- * Version 2] license."  If you don't indicate a single choice of license, a
- * recipient has the option to distribute your version of this file under
- * either the CDDL, the GPL Version 2 or to extend the choice of license to
- * its licensees as provided above.  However, if you add GPL Version 2 code
- * and therefore, elected the GPL Version 2 license, then the option applies
- * only if the new code is made subject to such option by the copyright
- * holder.
- *
- *
- * This file incorporates work covered by the following copyright and
- * permission notice:
- *
- * Copyright 2004 The Apache Software Foundation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -58,71 +17,57 @@
 
 package org.apache.taglibs.standard.tag.common.xml;
 
+import java.io.IOException;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
+import javax.xml.transform.TransformerException;
+
+import org.apache.taglibs.standard.util.EscapeXML;
+import org.apache.xpath.XPath;
+import org.apache.xpath.XPathContext;
 
 /**
- * <p>Tag handler for &lt;expr&gt; in JSTL's XML library.</p>
+ * Tag handler for &lt;out&gt; in JSTL's XML library.
+ * TODO: should we rename this to OutSupport to match the tag name?
  *
  * @author Shawn Bayern
  */
-
 public abstract class ExprSupport extends TagSupport {
 
-    //*********************************************************************
-    // Internal state
+    private XPath select;
+    protected boolean escapeXml = true;  // tag attribute
 
-    private String select;                       // tag attribute
-    protected boolean escapeXml;		 // tag attribute
-
-    //*********************************************************************
-    // Construction and initialization
-
-    /**
-     * Constructs a new handler.  As with TagSupport, subclasses should
-     * not provide other constructors and are expected to call the
-     * superclass constructor.
-     */
-    public ExprSupport() {
-        super();
-        init();
-    }
-
-    // resets local state
-    private void init() {
+    @Override
+    public void release() {
+        super.release();
 	select = null;
-        escapeXml = true;
     }
-
 
     //*********************************************************************
     // Tag logic
 
     // applies XPath expression from 'select' and prints the result
+    @Override
     public int doStartTag() throws JspException {
         try {
-	    XPathUtil xu = new XPathUtil(pageContext);
-	    String result = xu.valueOf(XPathUtil.getContext(this), select);
-	    org.apache.taglibs.standard.tag.common.core.OutSupport.out(
-              pageContext, escapeXml, result);
+            XPathContext context = XalanUtil.getContext(this, pageContext);
+            String result = select.execute(context, context.getCurrentNode(), null).str();
+            EscapeXML.emit(result, escapeXml, pageContext.getOut());
 	    return SKIP_BODY;
-        } catch (java.io.IOException ex) {
+        } catch (IOException ex) {
 	    throw new JspTagException(ex.toString(), ex);
+        } catch (TransformerException e) {
+            throw new JspTagException(e);
         }
     }
 
-    // Releases any resources we may have (or inherit)
-    public void release() {
-        super.release();
-        init();
-    }
-
-
-    //*********************************************************************
-    // Attribute accessors
-
     public void setSelect(String select) {
-	this.select = select;
+        try {
+            this.select = new XPath(select, null, null, XPath.SELECT);
+        } catch (TransformerException e) {
+            throw new AssertionError();
+    }
     }
 }
