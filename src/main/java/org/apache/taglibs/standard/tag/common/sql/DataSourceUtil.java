@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
+ * 
  *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,7 +33,7 @@ import org.apache.taglibs.standard.resources.Resources;
  * <p>A simple <code>DataSource</code> utility for the standard
  * <code>DriverManager</code> class.
  * <p>TODO: need to cache DataSource
- * 
+ *
  * @author Justyna Horwat
  */
 public class DataSourceUtil {
@@ -91,15 +91,15 @@ public class DataSourceUtil {
         DataSourceWrapper dataSource = new DataSourceWrapper();
 
         String[] paramString = new String[4];
-        int escCount = 0; 
-        int aryCount = 0; 
+        int escCount = 0;
+        int aryCount = 0;
         int begin = 0;
 
-        for(int index=0; index < params.length(); index++) {
+        for (int index = 0; index < params.length(); index++) {
             char nextChar = params.charAt(index);
             if (TOKEN.indexOf(nextChar) != -1) {
                 if (escCount == 0) {
-                    paramString[aryCount] = params.substring(begin,index).trim();
+                    paramString[aryCount] = params.substring(begin, index).trim();
                     begin = index + 1;
                     if (++aryCount > 4) {
                         throw new JspTagException(

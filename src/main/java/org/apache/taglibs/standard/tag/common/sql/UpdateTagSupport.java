@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
+ * 
  *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,13 +35,13 @@ import org.apache.taglibs.standard.resources.Resources;
 import org.apache.taglibs.standard.tag.common.core.Util;
 
 /**
- * <p>Tag handler for &lt;Update&gt; in JSTL.  
- * 
+ * <p>Tag handler for &lt;Update&gt; in JSTL.
+ *
  * @author Hans Bergsten
  * @author Justyna Horwat
  */
 
-public abstract class UpdateTagSupport extends BodyTagSupport 
+public abstract class UpdateTagSupport extends BodyTagSupport
     implements TryCatchFinally, SQLExecutionTag {
 
     private String var;
@@ -223,7 +223,7 @@ public abstract class UpdateTagSupport extends BodyTagSupport
 	Connection conn = null;
 	isPartOfTransaction = false;
 
-	TransactionTagSupport parent = (TransactionTagSupport) 
+        TransactionTagSupport parent = (TransactionTagSupport)
 	    findAncestorWithClass(this, TransactionTagSupport.class);
 	if (parent != null) {
             if (dataSourceSpecified) {
@@ -251,7 +251,7 @@ public abstract class UpdateTagSupport extends BodyTagSupport
 	return conn;
     }
 
-    private void setParameters(PreparedStatement ps, List parameters) 
+    private void setParameters(PreparedStatement ps, List parameters)
             throws SQLException {
 	if (parameters != null) {
 	    for (int i = 0; i < parameters.size(); i++) {

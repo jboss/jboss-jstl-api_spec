@@ -21,11 +21,12 @@ import java.io.InputStream;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import org.apache.taglibs.standard.util.XmlUtil;
 import org.w3c.dom.Document;
 
 import static org.easymock.EasyMock.createMock;
@@ -45,10 +46,7 @@ public class ExprSupportTest {
 
     @BeforeClass
     public static void loadXml() throws Exception {
-        DocumentBuilderFactory dbf = ModularUtil.createDocumentBuilderFactory();
-        dbf.setNamespaceAware(true);
-        dbf.setValidating(false);
-        DocumentBuilder db = dbf.newDocumentBuilder();
+        DocumentBuilder db = XmlUtil.newDocumentBuilder();
         InputStream is = ExprSupportTest.class.getResourceAsStream("test.xml");
         try {
             test = db.parse(is);

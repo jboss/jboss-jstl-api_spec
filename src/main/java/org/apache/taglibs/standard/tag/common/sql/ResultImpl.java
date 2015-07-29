@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
+ * 
  *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,8 +29,8 @@ import javax.servlet.jsp.jstl.sql.Result;
 
 /**
  * <p>This class creates a cached version of a <tt>ResultSet</tt>.
- * It's represented as a <tt>Result</tt> implementation, capable of 
- * returing an array of <tt>Row</tt> objects containing a <tt>Column</tt> 
+ * It's represented as a <tt>Result</tt> implementation, capable of
+ * returing an array of <tt>Row</tt> objects containing a <tt>Column</tt>
  * instance for each column in the row.</p>
  * <p>Note -- this is a private copy for the RI to avoid making the
  * corresponding class in javax.servlet.* public.</p>
@@ -88,7 +88,7 @@ public class ResultImpl implements Result {
         // Create the column name array
         columnNames = new String[noOfColumns];
         for (int i = 1; i <= noOfColumns; i++) {
-            columnNames[i-1] = rsmd.getColumnName(i);
+            columnNames[i - 1] = rsmd.getColumnName(i);
         }
 
         // Throw away all rows upto startRow
@@ -100,11 +100,11 @@ public class ResultImpl implements Result {
         int processedRows = 0;
         while (rs.next()) {
             if ((maxRows != -1) && (processedRows == maxRows)) {
-                isLimited = true; 
+                isLimited = true;
                 break;
             }
             Object[] columns = new Object[noOfColumns];
-            SortedMap columnMap = 
+            SortedMap columnMap =
                 new TreeMap(String.CASE_INSENSITIVE_ORDER);
 
             // JDBC uses 1 as the lowest index!
@@ -113,8 +113,8 @@ public class ResultImpl implements Result {
                 if (rs.wasNull()) {
                     value = null;
                 }
-                columns[i-1] = value;
-                columnMap.put(columnNames[i-1], value);
+                columns[i - 1] = value;
+                columnMap.put(columnNames[i - 1], value);
             }
             rowMap.add(columnMap);
             rowByIndex.add(columns);
@@ -137,7 +137,7 @@ public class ResultImpl implements Result {
         }
 
         //should just be able to return SortedMap[] object
-        return (SortedMap []) rowMap.toArray(new SortedMap[0]);
+        return (SortedMap[]) rowMap.toArray(new SortedMap[0]);
     }
 
 
@@ -154,7 +154,7 @@ public class ResultImpl implements Result {
         }
 
         //should just be able to return Object[][] object
-        return (Object [][])rowByIndex.toArray(new Object[0][0]);
+        return (Object[][]) rowByIndex.toArray(new Object[0][0]);
     }
 
     /**

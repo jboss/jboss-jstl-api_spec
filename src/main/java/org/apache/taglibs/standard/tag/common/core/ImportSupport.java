@@ -38,7 +38,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.jsp.JspException;
@@ -48,6 +47,7 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.TryCatchFinally;
 
 import org.apache.taglibs.standard.resources.Resources;
+import org.apache.taglibs.standard.util.UrlUtil;
 
 /**
  * <p>Support for tag handlers for &lt;import&gt;, the general-purpose
@@ -62,23 +62,6 @@ public abstract class ImportSupport extends BodyTagSupport
 
     //*********************************************************************
     // Public constants
-
-    /**
-     * <p>Valid characters in a scheme.</p>
-     * <p>RFC 1738 says the following:</p>
-     * <blockquote>
-     * Scheme names consist of a sequence of characters. The lower
-     * case letters "a"--"z", digits, and the characters plus ("+"),
-     * period ("."), and hyphen ("-") are allowed. For resiliency,
-     * programs interpreting URLs should treat upper case letters as
-     * equivalent to lower case in scheme names (e.g., allow "HTTP" as
-     * well as "http").
-     * </blockquote>
-     * <p>We treat as absolute any URL that begins with such a scheme name,
-     * followed by a colon.</p>
-     */
-    public static final String VALID_SCHEME_CHARS =
-            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+.-";
 
     /**
      * Default character encoding for response.
@@ -142,7 +125,7 @@ public abstract class ImportSupport extends BodyTagSupport
         }
 
         // Record whether our URL is absolute or relative
-        isAbsoluteUrl = isAbsoluteUrl();
+        isAbsoluteUrl = UrlUtil.isAbsoluteUrl(url);
 
         try {
             // If we need to expose a Reader, we've got to do it right away
@@ -302,24 +285,21 @@ public abstract class ImportSupport extends BodyTagSupport
             }
 
             // from this context, get a dispatcher
-            RequestDispatcher rd =
-                    c.getRequestDispatcher(stripSession(targetUrl));
+            RequestDispatcher rd = c.getRequestDispatcher(stripSession(targetUrl));
             if (rd == null) {
                 throw new JspTagException(stripSession(targetUrl));
             }
 
-            // include the resource, using our custom wrapper
+            // Wrap the response so we capture the capture the output.
+            // This relies on the underlying container to return content even if this is a HEAD
+            // request. Some containers (e.g. Tomcat versions without the fix for
+            // https://bz.apache.org/bugzilla/show_bug.cgi?id=57601 ) may not do that.
             ImportResponseWrapper irw =
-                    new ImportResponseWrapper(
-                            (HttpServletResponse) pageContext.getResponse());
+                    new ImportResponseWrapper((HttpServletResponse) pageContext.getResponse());
 
-            ImportRequestWrapper wrappedRequest =
-                    new ImportRequestWrapper(
-                            (HttpServletRequest) pageContext.getRequest());
-
-            // spec mandates specific error handling form include()
+            // spec mandates specific error handling from include()
             try {
-                rd.include(wrappedRequest, irw);
+                rd.include(pageContext.getRequest(), irw);
             } catch (IOException ex) {
                 throw new JspException(ex);
             } catch (RuntimeException ex) {
@@ -401,22 +381,6 @@ public abstract class ImportSupport extends BodyTagSupport
                         Resources.getMessage("IMPORT_ABS_ERROR", target, ex), ex);
             }
         }
-    }
-
-    /**
-     * Wraps requests to allow us to enforce the method to be GET
-     */
-    private class ImportRequestWrapper extends HttpServletRequestWrapper {
-
-        public ImportRequestWrapper(HttpServletRequest request) {
-            super(request);
-        }
-
-        @Override
-        public String getMethod() {
-            return "GET";
-        }
-
     }
 
     /**
@@ -590,45 +554,9 @@ public abstract class ImportSupport extends BodyTagSupport
         return urlWithParams;
     }
 
-    /**
-     * Returns <tt>true</tt> if our current URL is absolute,
-     * <tt>false</tt> otherwise.
-     */
-    private boolean isAbsoluteUrl() throws JspTagException {
-        return isAbsoluteUrl(url);
-    }
-
 
     //*********************************************************************
     // Public utility methods
-
-    /**
-     * Returns <tt>true</tt> if our current URL is absolute,
-     * <tt>false</tt> otherwise.
-     */
-    public static boolean isAbsoluteUrl(String url) {
-        // a null URL is not absolute, by our definition
-        if (url == null) {
-            return false;
-        }
-
-        // do a fast, simple check first
-        int colonPos;
-        if ((colonPos = url.indexOf(":")) == -1) {
-            return false;
-        }
-
-        // if we DO have a colon, make sure that every character
-        // leading up to it is a valid scheme character
-        for (int i = 0; i < colonPos; i++) {
-            if (VALID_SCHEME_CHARS.indexOf(url.charAt(i)) == -1) {
-                return false;
-            }
-        }
-
-        // if so, we've got an absolute url
-        return true;
-    }
 
     /**
      * Strips a servlet session ID from <tt>url</tt>.  The session ID
