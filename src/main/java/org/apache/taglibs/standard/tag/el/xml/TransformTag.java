@@ -118,6 +118,7 @@ public class TransformTag extends TransformSupport {
     // for EL-based attribute
     public void setXml(String xml_) {
         this.xml_ = xml_;
+        this.xmlSpecified = true;
     }
 
     // for EL-based attribute
