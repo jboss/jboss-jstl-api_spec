@@ -26,6 +26,7 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import org.apache.taglibs.standard.util.XmlUtil;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
@@ -59,7 +60,7 @@ class PageParser {
         try {
             parserFactory.setNamespaceAware(namespaceAware);
             parserFactory.setValidating(false);
-            parserFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            parserFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, XmlUtil.isSecureProcessing());
         } catch (ParserConfigurationException e) {
             throw new ExceptionInInitializerError(e);
         } catch (SAXNotRecognizedException e) {

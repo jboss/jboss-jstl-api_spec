@@ -69,7 +69,14 @@ public class XmlUtil {
     private static final DocumentBuilderFactory PARSER_FACTORY;
     private static final SAXTransformerFactory TRANSFORMER_FACTORY;
     private static final SAXParserFactory SAXPARSER_FACTORY;
+
+    private static boolean secureProcessing;
+
     static {
+
+        String secure = System.getProperty("org.apache.taglibs.secureXmlProcessing");
+        secureProcessing = ! (secure != null && secure.equalsIgnoreCase("false"));
+
         try {
             PARSER_FACTORY = runWithOurClassLoader(new Callable<DocumentBuilderFactory>() {
                 public DocumentBuilderFactory call() throws ParserConfigurationException {
@@ -78,7 +85,7 @@ public class XmlUtil {
             }, ParserConfigurationException.class);
             PARSER_FACTORY.setNamespaceAware(true);
             PARSER_FACTORY.setValidating(false);
-            PARSER_FACTORY.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            PARSER_FACTORY.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, secureProcessing);
         } catch (ParserConfigurationException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -92,7 +99,7 @@ public class XmlUtil {
                     return (SAXTransformerFactory) tf;
                 }
             }, TransformerConfigurationException.class);
-            TRANSFORMER_FACTORY.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            TRANSFORMER_FACTORY.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, secureProcessing);
         } catch (TransformerConfigurationException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -103,7 +110,7 @@ public class XmlUtil {
                 }
             }, RuntimeException.class);
             SAXPARSER_FACTORY.setNamespaceAware(true);
-            SAXPARSER_FACTORY.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            SAXPARSER_FACTORY.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, secureProcessing);
         } catch (ParserConfigurationException e) {
             throw new ExceptionInInitializerError(e);
         } catch (SAXNotRecognizedException e) {
@@ -111,6 +118,7 @@ public class XmlUtil {
         } catch (SAXNotSupportedException e) {
             throw new ExceptionInInitializerError(e);
         }
+
     }
 
     private static final String SP_ALLOWED_PROTOCOLS = "org.apache.taglibs.standard.xml.accessExternalEntity";
@@ -399,5 +407,9 @@ public class XmlUtil {
                 throw (Error) new AssertionError().initCause(cause);
             }
         }
+    }
+
+    public static boolean isSecureProcessing() {
+        return secureProcessing;
     }
 }
