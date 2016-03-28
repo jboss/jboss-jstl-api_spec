@@ -188,10 +188,12 @@ public class XmlUtil {
     /**
      * Create a new Transformer from an XSLT.
      * @param source the source of the XSLT.
+     * @param uriResolver
      * @return a new Transformer
      * @throws TransformerConfigurationException if there was a problem creating the Transformer from the XSLT
      */
-    public static Transformer newTransformer(Source source) throws TransformerConfigurationException {
+    public static Transformer newTransformer(Source source, JstlUriResolver uriResolver) throws TransformerConfigurationException {
+        TRANSFORMER_FACTORY.setURIResolver(uriResolver);
         Transformer transformer = TRANSFORMER_FACTORY.newTransformer(source);
         // Although newTansformer() is not allowed to return null, Xalan does.
         // Trap that here by throwing the expected TransformerConfigurationException.
