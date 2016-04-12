@@ -10,7 +10,7 @@
 
   <groupId>org.jboss.spec.javax.servlet.jstl</groupId>
   <artifactId>jboss-jstl-api_1.2_spec</artifactId>
-  <version>1.0.10.Final-SNAPSHOT</version>
+  <version>1.0.10.Final</version>
   <packaging>jar</packaging>
 
     <properties>
@@ -33,7 +33,7 @@
     <connection>scm:git:https://github.com/jboss/jboss-jstl-api_spec.git</connection>
     <developerConnection>scm:git:git@github.com:jboss/jboss-jstl-api_spec.git</developerConnection>
     <url>https://github.com/jboss/jboss-jstl-api_spec</url>
-    <tag>HEAD</tag>
+    <tag>jboss-jstl-api_1.2_spec-1.0.10.Final</tag>
   </scm>
 
   <build>
