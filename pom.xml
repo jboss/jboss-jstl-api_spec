@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
-        <version>21</version>
+        <version>25</version>
     </parent>
 
     <groupId>org.jboss.spec.javax.servlet.jstl</groupId>
@@ -53,6 +53,12 @@
         <url>https://github.com/jboss/jboss-jstl-api_spec</url>
         <tag>HEAD</tag>
     </scm>
+
+    <properties>
+      <maven.compiler.target>1.7</maven.compiler.target>
+      <maven.compiler.source>1.7</maven.compiler.source>
+    </properties>
+
 
     <build>
         <plugins>
@@ -101,6 +107,9 @@
                         <manifest>
                             <addDefaultSpecificationEntries>false</addDefaultSpecificationEntries>
                         </manifest>
+                        <manifestEntries>
+                            <Automatic-Module-Name>beta.jboss.jstl.api_1_2</Automatic-Module-Name>
+                        </manifestEntries>
                     </archive>
                     <instructions>
                         <Specification-Title>JSR 52: JavaServer Pages(TM) Standard Tag Library 1.2 API</Specification-Title>
@@ -144,17 +153,17 @@
         <dependency>
             <groupId>org.jboss.spec.javax.el</groupId>
             <artifactId>jboss-el-api_3.0_spec</artifactId>
-            <version>1.0.4.Final</version>
+            <version>1.0.11.Final</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.spec.javax.servlet</groupId>
             <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-            <version>1.0.0.Final</version>
+            <version>1.0.2.Final</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.spec.javax.servlet.jsp</groupId>
             <artifactId>jboss-jsp-api_2.3_spec</artifactId>
-            <version>1.0.1.Final</version>
+            <version>1.0.3.Final</version>
         </dependency>
         <dependency>
             <groupId>xalan</groupId>
